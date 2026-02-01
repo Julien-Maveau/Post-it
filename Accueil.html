@@ -1,37 +1,57 @@
 <html lang="fr">
 
 <head>
-    <link rel="stylesheet" href="styles.css">
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <link rel="stylesheet" href="Css/styles.css">
     <title>Accueil</title>
 </head>
 
-<body>
+<body class="hello">
     <header class="headofpage">
-        <div>
-            <img src="post-it.png" alt="logo" class="Logo">
-            <a href="Accueil.html">Accueil</a>
-
-            <a href="All.html">Tous les Post-it</a>
-
-            <a href="Completed.html">Les complétés</a>
-
-            <a href="Support.html">Support</a>
-            <form action="" method="get" class="Search">
-                <div class="form-example">
-                    <label for="Search-word"> Entrez votre recherche </label>
-                    <input type="text" name="Search-word" id="Search-word" />
-                    <input type="submit" value="Refresh" />
-                </div>
-
+        <img src="post-it.png" alt="logo" class="Logo">
+        <div class="flex-head">
+            <a href="Accueil.html">
+                Accueil
+            </a>
         </div>
+        <div class="flex-head">
+            <a href="All.html">
+                Tous les Post-it
+            </a>
+        </div>
+        <div class="flex-head">
+            <a href="Completed.html">
+                Les complétés
+            </a>
+        </div>
+        <div class="flex-head">
+            <a href="Support.html">
+                Support
+            </a>
+        </div>
+
     </header>
+    <br>
+    <div>
+        <form action="" method="get" class="Search">
+            <div class="form-example">
+                <label for="Search-word"> Entrez votre recherche </label>
+                <input type="text" name="Search-word" id="Search-word" />
+                <input type="submit" value="Refresh" />
+            </div>
+
+    </div>
     <h2> Bienvenue dans l'Accueil</h2>
-    <div><a href="Post-it.html">Post-it
-          <br>
-            <p> Votre Projet</p>
-
-
+    <div class='post-it2'><a href="Post-it.html">
+            <h1 class="Titre-post">Sticky note</h1>
+            <ul>
+                <li>You can add elements (contenteditable)</li>
+                <li>You can cross out an element by clicking it</li>
+                <li>Thanks to JavaScript</li>
+            </ul>
         </a>
+
+    </div>
     </div>
     <footer>
         <a
@@ -41,5 +61,6 @@
         </a>
     </footer>
 </body>
+<script src="Js/Applications.js"></script>
 
 </html>
