@@ -1,7 +1,7 @@
 [
     {
         "Title": "Post-It",
-        "lines": " Text to modify",
+        "lines": [" Text to modify","Other text to modify"],
         "Color": "Yellow"
     }
 ]
