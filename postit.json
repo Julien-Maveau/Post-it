@@ -1,7 +1,17 @@
-[
+{
+  "hello": [
     {
-        "Title": "Post-It",
-        "lines": [" Text to modify","Other text to modify"],
-        "Color": "Yellow"
+      "Title": "Post-It",
+      "lines": [
+        " Text to modify",
+        "Other text to modify"
+      ]
+    },
+    {
+      "id": "a8b3",
+      "postItIndex": "0",
+      "lineIndex": "0",
+      "newText": "Text to modicccfy"
     }
-]
+  ]
+}

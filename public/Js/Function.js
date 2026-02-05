@@ -1,124 +1,143 @@
-const file = "../../postit.json";
+const file = "http://localhost:3000/hello";
 const list = document.querySelector('#results');
 
 fetch(file)
-.then(res => res.json())
-.then(data => {
-  displayPostIt(data);
-});
+  .then(res => res.json())
+  .then(data => {
+    displayPostIt(data); // ✅ correction ici
+  });
 
-// Fonction pour charger les post-its à partir du fichier JSON
+// Fonction pour charger les post-its
 function displayPostIt(postIts) {
+
+  // Sécurité : on vérifie que c'est bien un tableau
+  if (!Array.isArray(postIts)) {
+    console.error("postIts n'est pas un tableau :", postIts);
+    return;
+  }
+
   list.innerHTML = "";
 
-  postIts.forEach(postIt => {
+  postIts.forEach((postIt, postItIndex) => {
+
+    // Sécurité : si lines n'existe pas ou n'est pas un tableau
+    if (!Array.isArray(postIt.lines)) {
+      console.error("lines manquant pour :", postIt);
+      return;
+    }
 
     const linesHTML = postIt.lines
-      .map(line => `<li contenteditable>${line}</li>`)
+      .map((line, lineIndex) =>
+        `<li contenteditable="true"
+            data-postit="${postItIndex}"
+            data-line="${lineIndex}">
+          ${line}
+        </li>`
+      )
       .join("");
 
     list.innerHTML += `
-      <form class="post-it2" action="post-it.html" method="post" >
-      <div id="background">
+      <div class="post-it2" style="background:${postIt.Color}">
         <h1 class="Titre-post">${postIt.Title}</h1>
         <ul>
           ${linesHTML}
-          <input type="text" name="name" id="name">
-        <input type="submit" name="" id="">
         </ul>
-        </div>
-      </form>
+      </div>
     `;
   });
 }
 
 
-
 //On créer une valeur pour la barre de progression
-let listeLI = 0;
+let listLI = 0;
 //on va chercher la barre de progression
-const progressbar = document.getElementById("post-it2");
-
-
-//On doit ensuite récuperer les lignes "li" et ajouter la classe ".done" ou la retirer si elle était activé.
-const postit = document.querySelectorAll("li");
 
 
 // faire une fonction de mise à jour
+const progressbar = document.getElementById("progressbar");
+
+// Fonction qui met à jour la barre
 function updateProgress() {
   progressbar.value = listLI;
 }
-
-let listLI = 0;
-
-//On doit écouter si le texte est cliqué
-list.addEventListener("click", (e) => {
+list.addEventListener("blur", (e) => {
 
   if (e.target.tagName === "LI") {
-    const li = e.target;
-    // Si on click on ajoute la classe done
-    if (!li.classList.contains("done")) {
-      li.classList.add("done");
-      listLI += 10;
-    } 
-    // Si on click une seconde fois on retire la classe
-    else {
-      li.classList.remove("done");
-      listLI -= 10;
-    }
 
-    updateProgress();
-    console.log(listLI);
+    // On récupère les infos depuis les data-attributes
+    const postItIndex = e.target.dataset.postit;
+    const lineIndex = e.target.dataset.line;
+    const newText = e.target.textContent.trim();
+
+    // Envoi au serveur
+    fetch("http://localhost:3000/hello", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        postItIndex,
+        lineIndex,
+        newText
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Ligne sauvegardée :", data);
+    });
   }
-});
-//on va chercher le grand Post-it
-//on prépare une liste des différents couleurs disponibles
-const othersCouleurs = []
-//On va chercher les différents bouttons
+
+}, true);
+
+    // Mise à jour visuelle
+    updateProgress();
+
+    // Debug
+    console.log("Progression :", listLI);
+
+// Liste des couleurs disponibles
+const othersCouleurs = [];
+
+// On récupère tous les boutons de couleur
 const couleurPost = document.querySelectorAll(".ButtonColor");
-//Pour chacun on va ajouter leurs couleurs à la liste
+
+// Pour chaque bouton de couleur
 couleurPost.forEach((button) => {
-  othersCouleurs.push(button.dataset.color)
-  button.classList.add(button.dataset.color)
-  console.log(othersCouleurs)
-  //Puis on fait une constante qui possède la couleurs du boutons selectionné
-  const couleurs = (button.dataset.color)
-  
-  //Ensuite on écoute quel bouton est utilisé
-  //Enfin, au click, on supprime toutes les autres classes de couleurs et on ajoute la nouvelle
+
+  // On récupère la couleur associée au bouton
+  const couleur = button.dataset.color;
+
+  // On stocke la couleur dans la liste globale
+  othersCouleurs.push(couleur);
+
+  // On ajoute la classe couleur au bouton (visuel)
+  button.classList.add(couleur);
+
+  // On écoute le clic sur ce bouton
   button.addEventListener("click", function (event) {
+
+    // Empêche le submit du formulaire
     event.preventDefault();
-    let background = list.querySelector("form")
-    background.classList.add(couleurs);
-    console.log(couleurs);
-    console.log(othersCouleurs);
-    othersCouleurs.forEach(Elements => {
-      background.classList.remove(Elements)
+
+    // On récupère le post-it affiché
+    const postIt = document.querySelector(".post-it2");
+
+    // Sécurité : si aucun post-it, on arrête
+    if (!postIt) return;
+
+    // On retire toutes les couleurs existantes
+    othersCouleurs.forEach(color => {
+      postIt.classList.remove(color);
     });
 
-    console.log(couleurs);
-    console.log(othersCouleurs);
+    // On applique la nouvelle couleur
+    postIt.classList.add(couleur);
 
-    background.classList.add(couleurs);
-  })
-
-})
-
-// On récupère le form
-const form = document.querySelectorAll("form");
-// On écoute le submit du form
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
-   // On récupère ce que le user à écrit
-  const inputValue = document.querySelector("#name").value;
-  // On envoie la donnée dans le fichier json
-  fetch("component/postit.json", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name: inputValue })
-  })
-
+    // Debug
+    console.log("Couleur appliquée :", couleur);
+  });
 });
+
 const availiable = [
   "auto", "default", "none", "context-menu", "help", "pointer", "progress",
   "wait", "cell", "crosshair", "text", "vertical-text", "alias", "copy",
