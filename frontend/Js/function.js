@@ -4,13 +4,13 @@ const list = document.querySelector('#results');
 fetch(file)
   .then(res => res.json())
   .then(data => {
-    displayPostIt(data); // ✅ correction ici
+    displayPostIt(data); 
   });
 
 // Fonction pour charger les post-its
 function displayPostIt(postIts) {
 
-  // Sécurité : on vérifie que c'est bien un tableau
+  // on vérifie que c'est bien un tableau
   if (!Array.isArray(postIts)) {
     console.error("postIts n'est pas un tableau :", postIts);
     return;
@@ -20,7 +20,7 @@ function displayPostIt(postIts) {
 
   postIts.forEach((postIt, postItIndex) => {
 
-    // Sécurité : si lines n'existe pas ou n'est pas un tableau
+   
     if (!Array.isArray(postIt.lines)) {
       console.error("lines manquant pour :", postIt);
       return;
