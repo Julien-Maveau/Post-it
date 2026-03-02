@@ -1,3 +1,8 @@
+#search{
+display: none;
+}
+
+
 body {
   font-family: fantasy;
   font-style: normal;
@@ -145,7 +150,14 @@ progress{
 .post-it2 li {
  	cursor:pointer; 
 }
+li.done {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
 
+li {
+  cursor: pointer;
+}
 .post-it2:before {
  	content:"";
   display:block;

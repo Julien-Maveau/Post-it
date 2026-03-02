@@ -1,20 +1,15 @@
-const file = "http://localhost:3000/hello";
+const file = "../../postit.json";
 const list = document.querySelector('#results');
-
+const API_URL ="http://127.0.0.1:5000/api/techs";
 fetch(file)
   .then(res => res.json())
   .then(data => {
-    displayPostIt(data); 
+    displayPostIt(data.hello); 
   });
-
 // Fonction pour charger les post-its
-function displayPostIt(postIts) {
+const displayPostIt=(postIts)=>{
 
-  // on vérifie que c'est bien un tableau
-  if (!Array.isArray(postIts)) {
-    console.error("postIts n'est pas un tableau :", postIts);
-    return;
-  }
+
 
   list.innerHTML = "";
 
@@ -27,14 +22,14 @@ function displayPostIt(postIts) {
     }
 
     const linesHTML = postIt.lines
-      .map((line, lineIndex) =>
-        `<li contenteditable="true"
-            data-postit="${postItIndex}"
-            data-line="${lineIndex}">
-          ${line}
-        </li>`
-      )
-      .join("");
+  .map((line, lineIndex) =>
+    `<li
+      data-postit="${postItIndex}"
+      data-line="${lineIndex}">
+      ${line}
+    </li>`
+  )
+  .join("");
 
     list.innerHTML += `
       <div class="post-it2" style="background:${postIt.Color}">
@@ -46,18 +41,58 @@ function displayPostIt(postIts) {
     `;
   });
 }
+// Valeur de progression
+let progressValue = 0;
 
-
-//On créer une valeur pour la barre de progression
-let listLI = 0;
-//on va chercher la barre de progression
-
-
-// faire une fonction de mise à jour
+// Barre de progression
 const progressbar = document.getElementById("progressbar");
 
+// Clic simple = cocher / décocher
+list.addEventListener("click", (e) => {
+
+  if (e.target.tagName === "LI") {
+    const li = e.target;
+
+    // Toggle visuel
+    li.classList.toggle("done");
+
+    // Mise à jour de la progression
+    if (li.classList.contains("done")) {
+      progressValue += 10;
+    } else {
+      progressValue -= 10;
+    }
+
+    // Sécurité (0–100)
+    progressValue = Math.max(0, Math.min(100, progressValue));
+
+    progressbar.value = progressValue;
+  }
+});
+
+// Double-clic = édition
+list.addEventListener("dblclick", (e) => {
+  if (e.target.tagName === "LI") {
+    const li = e.target;
+
+    li.setAttribute("contenteditable", "true");
+    li.focus();
+  }
+});
+
+// Quand on quitte l'édition
+list.addEventListener("blur", (e) => {
+  if (e.target.tagName === "LI") {
+    e.target.removeAttribute("contenteditable");
+  }
+}, true);
+//On créer une valeur pour la barre de progression
+let listLI = 0;
+
+
+
 // Fonction qui met à jour la barre
-function updateProgress() {
+const updateProgress=()=> {
   progressbar.value = listLI;
 }
 list.addEventListener("blur", (e) => {
@@ -70,7 +105,7 @@ list.addEventListener("blur", (e) => {
     const newText = e.target.textContent.trim();
 
     // Envoi au serveur
-    fetch("http://localhost:3000/hello", {
+    fetch("../../postit.json", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -137,7 +172,7 @@ couleurPost.forEach((button) => {
     console.log("Couleur appliquée :", couleur);
   });
 });
-
+//vivian
 const availiable = [
   "auto", "default", "none", "context-menu", "help", "pointer", "progress",
   "wait", "cell", "crosshair", "text", "vertical-text", "alias", "copy",
